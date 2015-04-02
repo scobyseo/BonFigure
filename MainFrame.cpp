@@ -9,6 +9,11 @@ MainFrame::MainFrame(wxWindow* parent)
 	wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);	
 	boxSizer1->Add(kbd, 1, wxALL | wxEXPAND, 0);
 	m_panelKBD->SetSizer(boxSizer1);
+	
+	KBDLayoutCanvas* keycodes = new KBDLayoutCanvas(m_panelKeycodes);
+	wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);	
+	boxSizer2->Add(keycodes, 1, wxALL | wxEXPAND, 0);
+	m_panelKeycodes->SetSizer(boxSizer2);
 }
 
 MainFrame::~MainFrame()

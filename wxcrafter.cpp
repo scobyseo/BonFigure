@@ -66,11 +66,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_panelKBD = new wxPanel(m_panel152, wxID_KBD_PANEL, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer213->Add(m_panelKBD, 1, wxALL|wxEXPAND, 0);
+    boxSizer213->Add(m_panelKBD, 1, wxALL|wxEXPAND|wxALIGN_CENTER, 0);
     
-    wxBoxSizer* boxSizerKeyCodes = new wxBoxSizer(wxHORIZONTAL);
+    m_panelKeycodes = new wxPanel(m_panel152, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer213->Add(boxSizerKeyCodes, 1, wxALL|wxEXPAND, 5);
+    boxSizer213->Add(m_panelKeycodes, 1, wxALL|wxEXPAND|wxALIGN_CENTER, 0);
     
     m_panel179 = new wxPanel(m_notebook131, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook131->AddPage(m_panel179, _("Macro"), false);

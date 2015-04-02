@@ -38,6 +38,7 @@ protected:
     wxButton* m_buttonCopyLayer;
     wxChoice* m_choiceCopyLayer;
     wxPanel* m_panelKBD;
+    wxPanel* m_panelKeycodes;
     wxPanel* m_panel179;
     wxPanel* m_panel1910;
     wxMenuBar* m_menuBar;
