@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/MainFrame.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter.cpp$(ObjectSuffix) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(ObjectSuffix) $(IntermediateDirectory)/kbdlayout.cpp$(ObjectSuffix) 
 
 
 
@@ -118,6 +118,14 @@ $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(DependSuffix): wxcrafter_bitmaps
 
 $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(PreprocessSuffix): wxcrafter_bitmaps.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/wxcrafter_bitmaps.cpp$(PreprocessSuffix) "wxcrafter_bitmaps.cpp"
+
+$(IntermediateDirectory)/kbdlayout.cpp$(ObjectSuffix): kbdlayout.cpp $(IntermediateDirectory)/kbdlayout.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/scoby/keyboard/BonKB/BonKUI/kbdlayout.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/kbdlayout.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/kbdlayout.cpp$(DependSuffix): kbdlayout.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/kbdlayout.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/kbdlayout.cpp$(DependSuffix) -MM "kbdlayout.cpp"
+
+$(IntermediateDirectory)/kbdlayout.cpp$(PreprocessSuffix): kbdlayout.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/kbdlayout.cpp$(PreprocessSuffix) "kbdlayout.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

@@ -64,13 +64,13 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer234->Add(m_choiceCopyLayer, 0, wxALL, 5);
     
-    wxBoxSizer* boxSizer51 = new wxBoxSizer(wxHORIZONTAL);
+    m_panelKBD = new wxPanel(m_panel152, wxID_KBD_PANEL, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer213->Add(boxSizer51, 1, wxALL|wxEXPAND, 5);
+    boxSizer213->Add(m_panelKBD, 1, wxALL|wxEXPAND, 0);
     
-    wxBoxSizer* boxSizer53 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizerKeyCodes = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer213->Add(boxSizer53, 1, wxALL|wxEXPAND, 5);
+    boxSizer213->Add(boxSizerKeyCodes, 1, wxALL|wxEXPAND, 5);
     
     m_panel179 = new wxPanel(m_notebook131, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook131->AddPage(m_panel179, _("Macro"), false);
@@ -121,6 +121,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     }
     Centre(wxBOTH);
     // Connect events
+    this->Connect(m_menuItem81->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onNew), NULL, this);
+    this->Connect(m_menuItem83->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onOpen), NULL, this);
+    this->Connect(m_menuItem85->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onSave), NULL, this);
+    this->Connect(m_menuItem91->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onDownload), NULL, this);
+    this->Connect(m_menuItem93->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onUpload), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     
@@ -128,6 +133,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 
 MainFrameBaseClass::~MainFrameBaseClass()
 {
+    this->Disconnect(m_menuItem81->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onNew), NULL, this);
+    this->Disconnect(m_menuItem83->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onOpen), NULL, this);
+    this->Disconnect(m_menuItem85->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onSave), NULL, this);
+    this->Disconnect(m_menuItem91->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onDownload), NULL, this);
+    this->Disconnect(m_menuItem93->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::onUpload), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     

@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 93,
+  "m_objCounter": 105,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC9ED9InitBitmapResources",
   "m_bitmapsFile": "wxcrafter_bitmaps.cpp",
@@ -775,26 +775,69 @@
                "m_children": []
               }]
             }, {
-             "m_type": 4401,
+             "m_type": 4408,
              "proportion": 1,
-             "border": 5,
+             "border": 0,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": [],
+             "m_styles": ["wxTAB_TRAVERSAL"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
+               "type": "winid",
+               "m_label": "ID:",
+               "m_winid": "wxID_KBD_PANEL"
+              }, {
+               "type": "string",
+               "m_label": "Size:",
+               "m_value": "-1,-1"
+              }, {
+               "type": "string",
+               "m_label": "Minimum Size:",
+               "m_value": "-1,-1"
+              }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "boxSizer51"
+               "m_value": "m_panelKBD"
+              }, {
+               "type": "multi-string",
+               "m_label": "Tooltip:",
+               "m_value": ""
+              }, {
+               "type": "colour",
+               "m_label": "Bg Colour:",
+               "colour": "<Default>"
+              }, {
+               "type": "colour",
+               "m_label": "Fg Colour:",
+               "colour": "<Default>"
+              }, {
+               "type": "font",
+               "m_label": "Font:",
+               "m_value": ""
+              }, {
+               "type": "bool",
+               "m_label": "Hidden",
+               "m_value": false
+              }, {
+               "type": "bool",
+               "m_label": "Disabled",
+               "m_value": false
+              }, {
+               "type": "bool",
+               "m_label": "Focused",
+               "m_value": false
+              }, {
+               "type": "string",
+               "m_label": "Class Name:",
+               "m_value": ""
+              }, {
+               "type": "string",
+               "m_label": "Include File:",
+               "m_value": ""
               }, {
                "type": "string",
                "m_label": "Style:",
                "m_value": ""
-              }, {
-               "type": "choice",
-               "m_label": "Orientation:",
-               "m_selection": 1,
-               "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
               }],
              "m_events": [],
              "m_children": []
@@ -809,7 +852,7 @@
              "m_properties": [{
                "type": "string",
                "m_label": "Name:",
-               "m_value": "boxSizer53"
+               "m_value": "boxSizerKeyCodes"
               }, {
                "type": "string",
                "m_label": "Style:",
@@ -1118,7 +1161,14 @@
            "m_label": "Checked",
            "m_value": false
           }],
-         "m_events": [],
+         "m_events": [{
+           "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+           "m_eventClass": "wxCommandEvent",
+           "m_eventHandler": "wxCommandEventHandler",
+           "m_functionNameAndSignature": "onNew(wxCommandEvent& event)",
+           "m_description": "Menu item has been clicked",
+           "m_noBody": false
+          }],
          "m_children": []
         }, {
          "m_type": 4459,
@@ -1162,7 +1212,14 @@
            "m_label": "Checked",
            "m_value": false
           }],
-         "m_events": [],
+         "m_events": [{
+           "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+           "m_eventClass": "wxCommandEvent",
+           "m_eventHandler": "wxCommandEventHandler",
+           "m_functionNameAndSignature": "onOpen(wxCommandEvent& event)",
+           "m_description": "Menu item has been clicked",
+           "m_noBody": false
+          }],
          "m_children": []
         }, {
          "m_type": 4459,
@@ -1206,7 +1263,14 @@
            "m_label": "Checked",
            "m_value": false
           }],
-         "m_events": [],
+         "m_events": [{
+           "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+           "m_eventClass": "wxCommandEvent",
+           "m_eventHandler": "wxCommandEventHandler",
+           "m_functionNameAndSignature": "onSave(wxCommandEvent& event)",
+           "m_description": "Menu item has been clicked",
+           "m_noBody": false
+          }],
          "m_children": []
         }, {
          "m_type": 4459,
@@ -1294,7 +1358,14 @@
            "m_label": "Checked",
            "m_value": false
           }],
-         "m_events": [],
+         "m_events": [{
+           "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+           "m_eventClass": "wxCommandEvent",
+           "m_eventHandler": "wxCommandEventHandler",
+           "m_functionNameAndSignature": "onDownload(wxCommandEvent& event)",
+           "m_description": "Menu item has been clicked",
+           "m_noBody": false
+          }],
          "m_children": []
         }, {
          "m_type": 4459,
@@ -1338,7 +1409,14 @@
            "m_label": "Checked",
            "m_value": false
           }],
-         "m_events": [],
+         "m_events": [{
+           "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+           "m_eventClass": "wxCommandEvent",
+           "m_eventHandler": "wxCommandEventHandler",
+           "m_functionNameAndSignature": "onUpload(wxCommandEvent& event)",
+           "m_description": "Menu item has been clicked",
+           "m_noBody": false
+          }],
          "m_children": []
         }, {
          "m_type": 4459,

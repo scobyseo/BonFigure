@@ -1,9 +1,14 @@
 #include "MainFrame.h"
 #include <wx/aboutdlg.h>
+#include "kbdlayout.h"
 
 MainFrame::MainFrame(wxWindow* parent)
     : MainFrameBaseClass(parent)
 {
+	KBDLayoutCanvas* kbd = new KBDLayoutCanvas(m_panelKBD);
+	wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);	
+	boxSizer1->Add(kbd, 1, wxALL | wxEXPAND, 0);
+	m_panelKBD->SetSizer(boxSizer1);
 }
 
 MainFrame::~MainFrame()
@@ -20,8 +25,23 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxAboutDialogInfo info;
-    info.SetCopyright(_("My MainFrame"));
-    info.SetLicence(_("GPL v2 or later"));
-    info.SetDescription(_("Short description goes here"));
+    info.SetCopyright(_("BonKUI"));
+    info.SetLicence(_("GPL v3"));
+    info.SetDescription(_("A unified custom keyboard firmware configurator"));
     ::wxAboutBox(info);
+}
+void MainFrame::onDownload(wxCommandEvent& event)
+{
+}
+void MainFrame::onNew(wxCommandEvent& event)
+{
+}
+void MainFrame::onOpen(wxCommandEvent& event)
+{
+}
+void MainFrame::onSave(wxCommandEvent& event)
+{
+}
+void MainFrame::onUpload(wxCommandEvent& event)
+{
 }

@@ -25,6 +25,10 @@
 
 class MainFrameBaseClass : public wxFrame
 {
+public:
+    enum {
+        wxID_KBD_PANEL = 1001,
+    };
 protected:
     wxNotebook* m_notebook131;
     wxPanel* m_panel152;
@@ -33,6 +37,7 @@ protected:
     wxButton* m_buttonReset;
     wxButton* m_buttonCopyLayer;
     wxChoice* m_choiceCopyLayer;
+    wxPanel* m_panelKBD;
     wxPanel* m_panel179;
     wxPanel* m_panel1910;
     wxMenuBar* m_menuBar;
@@ -50,6 +55,11 @@ protected:
     wxToolBar* m_mainToolbar;
 
 protected:
+    virtual void onNew(wxCommandEvent& event) { event.Skip(); }
+    virtual void onOpen(wxCommandEvent& event) { event.Skip(); }
+    virtual void onSave(wxCommandEvent& event) { event.Skip(); }
+    virtual void onDownload(wxCommandEvent& event) { event.Skip(); }
+    virtual void onUpload(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 
