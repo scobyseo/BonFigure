@@ -81,7 +81,7 @@ void KBDLayoutCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 	int i, j;
 	float r, c;
 	wxPaintDC bpdc(this);
-	PrepareDC(bpdc);
+	//PrepareDC(bpdc);
 	r = c = 0.0;
 	for (i = 0; i < 5; i ++){
 		for (j = 0; j < 16; j ++){
@@ -126,7 +126,7 @@ void KBDLayoutCanvas::OnMouseDown(wxMouseEvent &event)
 			c += key.width;
 		}
 	}
-	Refresh();
+	Refresh(false);
 }
 
 void KBDLayoutCanvas::OnMouseUp(wxMouseEvent &event)

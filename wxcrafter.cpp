@@ -115,7 +115,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
     m_mainToolbar->SetToolBitmapSize(wxSize(16,16));
     
-    SetSizeHints(800,600);
+    SetSizeHints(1000,700);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
