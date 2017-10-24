@@ -7,37 +7,13 @@
 
 #include "kbdlayout.h"
 
-struct KeyItem {
+struct Key {
+	enum KeyType { KEY, BLANK, LED };
 	wxString label;
 	float width;
 	float height;
-};
-
-struct KeyItem sample_layout[5][16] = {
-	{ { wxT("ESC"), 1.0, 1.0 }, { wxT("1"), 1.0, 1.0}, { wxT("2"), 1.0, 1.0},
-	  { wxT("3"), 1.0, 1.0}, { wxT("4"), 1.0, 1.0}, { wxT("5"), 1.0, 1.0},
-	  { wxT("6"), 1.0, 1.0}, { wxT("7"), 1.0, 1.0}, { wxT("8"), 1.0, 1.0},
-	  { wxT("9"), 1.0, 1.0}, { wxT("0"), 1.0, 1.0}, { wxT("-"), 1.0, 1.0},
-	  { wxT("="), 1.0, 1.0}, { wxT("`"), 1.0, 1.0}, { wxT("\\"), 1.0, 1.0}, 
-	  { wxT(""), 0, 0} },
-	{ { wxT("Tab"), 1.5, 1.0 }, { wxT("Q"), 1.0, 1.0}, { wxT("W"), 1.0, 1.0},
-	  { wxT("E"), 1.0, 1.0}, { wxT("R"), 1.0, 1.0}, { wxT("T"), 1.0, 1.0},
-	  { wxT("Y"), 1.0, 1.0}, { wxT("U"), 1.0, 1.0}, { wxT("I"), 1.0, 1.0},
-	  { wxT("O"), 1.0, 1.0}, { wxT("P"), 1.0, 1.0}, { wxT("["), 1.0, 1.0},
-	  { wxT("]"), 1.0, 1.0}, { wxT("Backspace"), 1.5, 1.0 }, { wxT(""), 0, 0} },
-	{ { wxT("CapsLock"), 1.75, 1.0 }, { wxT("A"), 1.0, 1.0}, { wxT("S"), 1.0, 1.0},
-	  { wxT("D"), 1.0, 1.0}, { wxT("F"), 1.0, 1.0}, { wxT("G"), 1.0, 1.0},
-	  { wxT("H"), 1.0, 1.0}, { wxT("J"), 1.0, 1.0}, { wxT("K"), 1.0, 1.0},
-	  { wxT("L"), 1.0, 1.0}, { wxT(";"), 1.0, 1.0}, { wxT("'"), 1.0, 1.0},
-	  { wxT("Enter"), 2.25, 1.0 }, { wxT(""), 0, 0} },
-	{ { wxT("LShift"), 2.25, 1.0 }, { wxT("Z"), 1.0, 1.0}, { wxT("X"), 1.0, 1.0},
-	  { wxT("C"), 1.0, 1.0}, { wxT("V"), 1.0, 1.0}, { wxT("B"), 1.0, 1.0},
-	  { wxT("N"), 1.0, 1.0}, { wxT("M"), 1.0, 1.0}, { wxT("<"), 1.0, 1.0},
-	  { wxT(">"), 1.0, 1.0}, { wxT("/"), 1.0, 1.0}, { wxT("RShift"), 1.75, 1.0},
-	  { wxT("Fn"), 1.0, 1.0}, { wxT(""), 0, 0} },
-	{ { wxT("LCtrl"), 1.25, 1.0 }, { wxT("LGUI"), 1.25, 1.0}, { wxT("LAlt"), 1.25, 1.0},
-	  { wxT("Spacebar"), 6.25, 1.0}, { wxT("RAlt"), 1.25, 1.0}, { wxT("RGUI"), 1.25, 1.0},
-	  { wxT("Apps"), 1.25, 1.0}, { wxT("RCtrl"), 1.25, 1.0}, { wxT(""), 0, 0} }
+	int   keycode;	/* valid for keycode view */
+	int   row, col;	/* matrix related : valid for layer view */
 };
 
 KBDLayoutCanvas::KBDLayoutCanvas( wxPanel* parent )
@@ -85,7 +61,7 @@ void KBDLayoutCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 	r = c = 0.0;
 	for (i = 0; i < 5; i ++){
 		for (j = 0; j < 16; j ++){
-			struct KeyItem key = sample_layout[i][j];
+			struct Key key = sample_layout[i][j];
 			if (key.width == 0.0){
 				c = 0.0;
 				r += 1.0;
@@ -113,7 +89,7 @@ void KBDLayoutCanvas::OnMouseDown(wxMouseEvent &event)
 	float r = 0.0, c = 0.0;
 	for (i = 0; i < 5; i ++){
 		for (j = 0; j < 16; j ++){
-			struct KeyItem key = sample_layout[i][j];
+			struct Key key = sample_layout[i][j];
 			if (key.width == 0.0){
 				c = 0.0;
 				r += 1.0;

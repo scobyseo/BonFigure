@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<board>
+  <name>BFace</name>
+  <controller>ps2avrGB</controller>
+  <row>
+    <key size="1" row="0" col="5" keycode="ESC"/>
+    <key size="1" row="1" col="4" keycode="1"/>
+    <key size="1" row="2" col="4" keycode="2"/>
+    <key size="1" row="3" col="4" keycode="3"/>
+    <key size="1" row="4" col="4" keycode="4"/>
+    <key size="1" row="5" col="4" keycode="5"/>
+    <key size="1" row="1" col="6" keycode="6"/>
+    <key size="1" row="11" col="6" keycode="7"/>
+    <key size="1" row="11" col="7" keycode="8"/>
+    <key size="1" row="1" col="7" keycode="9"/>
+    <key size="1" row="10" col="4" keycode="0"/>
+    <key size="1" row="11" col="4" keycode="-"/>
+    <key size="1" row="12" col="4" keycode="="/>
+    <key size="1" row="13" col="4" keycode="`"/>
+    <key size="1" row="14" col="4" keycode="BackSpc"/>
+  </row>
+  <row>
+    <key size="1.5" row="0" col="3" keycode="Tab"/>
+    <key size="1" row="1" col="3" keycode="q"/>
+    <key size="1" row="2" col="3" keycode="w"/>
+    <key size="1" row="3" col="3" keycode="e"/>
+    <key size="1" row="4" col="3" keycode="r"/>
+    <key size="1" row="5" col="3" keycode="t"/>
+    <key size="1" row="2" col="6" keycode="y"/>
+    <key size="1" row="12" col="6" keycode="u"/>
+    <key size="1" row="12" col="7" keycode="i"/>
+    <key size="1" row="2" col="7" keycode="o"/>
+    <key size="1" row="10" col="3" keycode="p"/>
+    <key size="1" row="11" col="3" keycode="["/>
+    <key size="1" row="12" col="3" keycode="]"/>
+    <key size="1.5" row="13" col="3" keycode="\"/>
+  </row>
+  <row>
+    <key size="1.75" row="0" col="2" keycode="CapsLk"/>
+    <key size="1" row="1" col="2" keycode="a"/>
+    <key size="1" row="2" col="2" keycode="s"/>
+    <key size="1" row="3" col="2" keycode="d"/>
+    <key size="1" row="4" col="2" keycode="f"/>
+    <key size="1" row="5" col="2" keycode="g"/>
+    <key size="1" row="3" col="6" keycode="h"/>
+    <key size="1" row="13" col="6" keycode="j"/>
+    <key size="1" row="13" col="7" keycode="k"/>
+    <key size="1" row="3" col="7" keycode="l"/>
+    <key size="1" row="10" col="2" keycode=";"/>
+    <key size="1" row="11" col="2" keycode="'"/>
+    <key size="1" row="12" col="2" keycode="ISO1"/>
+    <key size="1.25" row="13" col="2" keycode="Enter"/>
+  </row>
+  <row>
+    <key size="1.25" row="0" col="1" keycode="LShift"/>
+    <key size="1" row="3" col="0" keycode="ISO2"/>
+    <key size="1" row="1" col="1" keycode="z"/>
+    <key size="1" row="2" col="1" keycode="x"/>
+    <key size="1" row="3" col="1" keycode="c"/>
+    <key size="1" row="4" col="1" keycode="v"/>
+    <key size="1" row="5" col="1" keycode="b"/>
+    <key size="1" row="4" col="6" keycode="n"/>
+    <key size="1" row="14" col="6" keycode="m"/>
+    <key size="1" row="14" col="7" keycode=","/>
+    <key size="1" row="4" col="7" keycode="."/>
+    <key size="1" row="10" col="1" keycode="/"/>
+    <key size="1.75" row="11" col="1" keycode="RShift"/>
+    <key size="1" row="12" col="1" keycode="Fn"/>
+  </row>
+  <row>
+    <key size="1.25" row="0" col="0" keycode="LCtrl"/>
+    <key size="1.25" row="1" col="0" keycode="LWin"/>
+    <key size="1.25" row="2" col="0" keycode="LAlt"/>
+    <key size="6.25" row="5" col="6" keycode="Space"/>
+    <key size="1.25" row="5" col="7" keycode="RAlt"/>
+    <key size="1.25" row="10" col="0" keycode="RWin"/>
+    <key size="1.25" row="11" col="0" keycode="App"/>
+    <key size="1.25" row="12" col="0" keycode="RCtrl"/>
+  </row>
+</board>
