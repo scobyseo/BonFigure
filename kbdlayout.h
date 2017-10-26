@@ -7,6 +7,8 @@
 #include "wx/dcbuffer.h"
 #include "wx/graphics.h"
 
+#include "board.h"
+
 class KBDLayoutCanvas: public wxPanel
 {
 private:

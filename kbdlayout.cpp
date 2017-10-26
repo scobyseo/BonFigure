@@ -7,15 +7,6 @@
 
 #include "kbdlayout.h"
 
-struct Key {
-	enum KeyType { KEY, BLANK, LED };
-	wxString label;
-	float width;
-	float height;
-	int   keycode;	/* valid for keycode view */
-	int   row, col;	/* matrix related : valid for layer view */
-};
-
 KBDLayoutCanvas::KBDLayoutCanvas( wxPanel* parent )
 	: wxPanel(parent)
 {

@@ -1,32 +1,6 @@
-#include <wx/list.h>
-
-struct KeyCode {
-	int      code;
-	wxString label;
-	wxString comment;
-};
-
-WX_DECLARE_LIST(struct KeyCode, KeyCodeRow);
-WX_DECLARE_LIST(KeyCodeRow, KeyCodeLayout);
-
-struct KbdConfig {
-	wxString name;
-	enum { OptNumber, OptSelection, OptColor, OptArray } type;
-	int min, max;
-	int value;
-};
-
-WX_DECLARE_LIST(struct KbdConfig, KbdConfigs);
-
-struct KbdLayer {
-	int id;
-	wxString name;
-	wxString comment;
-};
-
-WX_DECLARE_LIST(struct KbdLayer, KbdLayers);
-
-/* ------------------- .cpp --------------------- */
+/* board.cpp 
+ *  (C) Seo Bon Keun, 2017
+ */
 #include <wx/listimpl.cpp>
 
 WX_DEFINE_LIST(KeyCodeRow);
@@ -34,86 +8,49 @@ WX_DEFINE_LIST(KeyCodeLayout);
 WX_DEFINE_LIST(KbdConfigs);
 WX_DEFINE_LIST(KbdLayers);
 
-class Controller {
-private:
-	int cols, rows;
-	wxString name;
-	wxString author;
-	wxString url;
-	// Layers
-	int nr_layers, max_layers;
-	struct Layer *layer;
-	// KeyCodes
-	int nr_codes, max_codes;
-	int nr_code_rows;
-	struct KeyCode *codes;
-	// Configurations
-	int nr_confs, max_confs;
-	struct Config *conf;
-public:
-	Controller(){
-	}
-
-	AddLayer(wxXmlNode *node);
-	GetLayers();
-
-	AddKeyCode(wxXmlNode *node);
-	GetKeyCodes();
-	GetKeyCode(int code);
-	GetKeyCode(wxString label);
-
-	AddConfig(wxXmlNode *node);
-	GetConfigs();				     // for display
-	GetConfig(wxString option);
-	SetConfig(wxString option, wxString value);  // set option
-	DownloadConfig();
-	UploadConfig();
-};
 
 Controller::AddLayer(wxXmlNode *node)
 {
-	if (nr_layers == max_layers){
-		max_layers *= 2;
-		struct Layer *layers = new struct Layer[max_layers];
-		memcpy(layers, this->layers, nr_layers * sizeof(struct Layer));
-		delete(this->layers);
-		this->layers = layers;
-	}
+	struct KbdLayer *layer = new struct KbdLayer;
 
-	layers[nr_layers].id      = node->GetAttribute("id", "-1");
-	layers[nr_layers].name    = node->GetAttribute("name", "");
-	layers[nr_layers].comment = node->GetAttribute("comment", "");
-
-	nr_layers ++;
+	layer->id      = node->GetAttribute("id", "-1");
+	layer->name    = node->GetAttribute("name", "");
+	layer->comment = node->GetAttribute("comment", "");
+	layers.Append(layer);
 }
 
 Controller::GetLayer(int id)
 {
-	return layers[id];
+	return layers;
 }
 
 Controller::LoadKeyCodes(wxXmlNode *node)
 {
 	wxXmlNode *child;
-	KeyCodeRow *row = new KeyCodeRow;
+	KeyRow *row = new KeyRow;
 
 	for (child = node->GetChildren(); child; child = child->GetNext()){
 		wxString sName = child->GetName();
 		if (sName == "key"){
-			struct KeyCode *key = new struct KeyCode;
+			struct Key *key = new struct Key;
 			child->GetAttribute("code", "255").ToLong(&key->code);
 			key->label   = child->GetAttribute("label", "");
 			key->comment = child->GetNodeContent();
+			key->type    = KEY_NORMAL;
+			key->width   = 1.0;
+			key->height  = 1.0;
+			key->row     = -1;
+			key->col     = -1;
 			row->Append(key);
 		} else if (sName == "newline"){
-			codeLayout.Append(row);
-			row = new KeyCodeRow;
+			keycodes.Append(row);
+			row = new KeyRow;
 		}
 	}
-	codeLayout.Append(row);
+	keycodes.Append(row);
 }
 
-Controller::LoadConfig(wxXmlNode *node)
+Controller::LoadConfigs(wxXmlNode *node)
 {
 	wxXmlNode *child;
 	struct KbdConfig *config;
@@ -133,19 +70,23 @@ Controller::LoadConfig(wxXmlNode *node)
 		} else if (sType == "color"){
 			config->type = OptColor;
 		} else if (sType == "selection"){
+			int i = 0;
 			config->type = OptSelection;
+			config->min  = 0;
+			child->GetAttribute("size", "0").ToLong(&config->max);
+			config->items = new wxString[config->max];
 			wxXmlNode *opt = child->GetChildren();
 			while(opt){
+				config->items[i++] = opt->GetNodeContent();
 				opt = opt->GetNext();
 			}
 		} else if (sType == "array"){
 			config->type = OptArray;
 			config->min  = 0;
 			child->GetAttribute("size", "0").ToLong(&config->max);
-		}
-		row->Append(key);
+		} else { /* DO NOTHING */ }
+		configs.Append(key);
 	}
-	codeLayout.Append(row);
 }
 
 Controller::LoadFile(wxString filename)
@@ -182,7 +123,7 @@ Controller::LoadFile(wxString filename)
 		} else if (child->GetName() == "keycodes") {
 			LoadKeyCodes(child);
 		} else if (child->GetName() == "configurations") {
-			LoadConfigurations(child);
+			LoadConfigs(child);
 		} else if (child->GetName() == "functions") {
 			LoadFunctions(child);
 		} else { /* DO NOTHING */ }
@@ -190,52 +131,34 @@ Controller::LoadFile(wxString filename)
 	}
 }
 
-class Board {
-private:
-	wxString name;
-	wxString controller;
-	wxList<
-	Controller *ctrl;
-	int nr_rows, max_rows;
-	int nr_cols, max_cols;
-	struct kbdRowList *layout;
-	// row - keys
-public:
-	Board(){
-		int i;
-		nr_rows = 0;
-		nr_cols = 0;
-		max_rows = 8;
-		max_cols = 25;
-		layout = new struct KeyItem[max_rows][max_cols];
-	}
-	bool LoadFile(wxString filename);
-	bool LoadRows(wxXmlNode *parent);
-	void AddKey(int size, int row, int col, wxString sCode);
-	void AddSapce(int size);
-};
+/* ----------------------- BOARD ------------------------ */
 
 Board::AddKey(wxXmlNode *node)
 {
-	wxString sSize, sRow, sCol, sCode;
-	long size, row, col;
-	sSize = node->GetAttribute("size", "1");
-	sRow  = node->GetAttribute("col",  "-1");
-	sCol  = node->GetAttribute("row",  "-1");
-	sCode = node->GetAttribute("keycode", " "); // unmapped key code
-	sSize.ToLong(&size);
-	sRow.ToLong(&row);
-	sCol.ToLong(&col);
+	struct Key *key = new struct Key;
 
-	layout.
+	key->type    = KEY_NORMAL;
+	key->label   = node->GetAttribute("keycode", " "); // unmapped key code
+	// key->code = controller->LookupKeycode(key->label);
+	key->comment = node->GetNodeContent();
+	key->height  = 1.0;
+	node->GetAttribute("size", "1").ToDouble(&key->width);
+	node->GetAttribute("col", "-1").ToLong(&key->col);
+	node->GetAttribute("row", "-1").ToLong(&key->row);
 }
 
 void Board::AddSpace(wxXmlNode *node)
 {
-	wxString sSize;
-	long size;
-	sSize = node->GetAttribute("size", "1");
-	sSize.ToLong(&size);
+	struct Key *key = new struct Key;
+
+	key->type    = KEY_BLANK;
+	key->label   = "";
+	// key->code = -1;
+	key->comment = node->GetNodeContent();
+	key->col     = -1;
+	key->row     = -1;
+	key->height  = 1.0;
+	node->GetAttribute("size", "1").ToDouble(&key->width);
 }
 
 bool Board::LoadRows(wxXmlNode *parent)
@@ -251,7 +174,7 @@ bool Board::LoadRows(wxXmlNode *parent)
 	return true;
 }
 
-Board::LoadFile(wxString filename)
+wxString Board::LoadFile(wxString filename)
 {
 	wxXmlDocument doc;
 	if (!doc.Load(filename))
@@ -270,5 +193,80 @@ Board::LoadFile(wxString filename)
 			loadRows(child);
 		} else { /* DO NOTHING */ }
 		child = child->GetNext();
+	}
+
+	return this->controller;
+}
+
+void Board::SetController(Controller *ctrl)
+{
+	this->ctrl = ctrl;
+}
+
+WX_DECLARE_LIST(Board, BoardList);
+WX_DECLARE_LIST(Controller, ControllerList);
+
+BoardPool {
+private:
+	BoardList      boards;
+	ControllerList ctrls;
+public:
+	LoadControllers();
+	LoadBoards();
+};
+
+
+int BoardPool::LoadControllers()
+{
+	wxFileSystem fs;
+	wsString pwd = fs.GetPath();
+	fs.ChangePathTo("layouts", true);
+	wxString layoutPath = fs.GetPath();
+	wxString fname = fs.FindFirst("*.ctl", wxFILE);
+	while (fname != ""){
+		Controller *ctl = new Controller();
+		ctl->LoadFile(fname);
+		ctrls.Append(ctl);
+		fname = fs.FindNext();
+	}
+	return 0;
+}
+
+Controller *BoardPool::GetController(wxString name)
+{
+	ControllerList::iterator iter;
+	for (iter = ctrls.begin(); iter != ctrls.end(); ++iter){
+		Controller *ctl = iter;
+		if (ctl->name == name){
+			return ctl;
+		}
+	}
+}
+
+int BoardPool::LoadBoards()
+{
+	wxFileSystem fs;
+	wsString pwd = fs.GetPath();
+	fs.ChangePathTo("layouts", true);
+	wxString layoutPath = fs.GetPath();
+	wxString fname = fs.FindFirst("*.board", wxFILE);
+	while (fname != ""){
+		Board *brd = new Board();
+		wxString controller = brd->LoadFile(fname);
+		brd->SetController(GetController(controller));
+		boards.Append(brd);
+		fname = fs.FindNext();
+	}
+	return 0;
+}
+
+Board *BoardPool::GetBoard(wxString name)
+{
+	BoardList::iterator iter;
+	for (iter = boards.begin(); iter != boards.end(); ++iter){
+		Boards *brd = iter;
+		if (brd->name == name){
+			return brd;
+		}
 	}
 }
