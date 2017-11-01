@@ -51,25 +51,29 @@ private:
 	KbdLayers layers;
 	KbdLayout keycodes;
 	Configs   configs;
-	Funcs     functions;
+	KbdFuncs  functions;
 public:
 	Controller(){
+		cols = 0;
+		rows = 0;
 	}
 
-	AddLayer(wxXmlNode *node);
-	GetLayers();
+	bool	  LoadFile();
 
-	AddKeyCode(wxXmlNode *node);
-	GetKeyCodes();
-	GetKeyCode(int code);
-	GetKeyCode(wxString label);
+	void      AddLayer(wxXmlNode *node);
+	KbdLayers GetLayers();
 
-	AddConfig(wxXmlNode *node);
-	GetConfigs();				     // for display
-	GetConfig(wxString option);
-	SetConfig(wxString option, wxString value);  // set option
-	DownloadConfig();
-	UploadConfig();
+	void      LoadKeyCodes(wxXmlNode *node);
+	KbdLayout GetKeyCodes();
+	int	  GetKeyCode(int code);
+	int	  GetKeyCode(wxString label);
+
+	void      AddConfig(wxXmlNode *node);
+	Configs   GetConfigs();			     // for display
+	KbdConfig GetConfig(wxString option);
+	void      SetConfig(wxString option, wxString value);  // set option
+	int	  DownloadConfig();
+	int	  UploadConfig();
 };
 
 class Board {
@@ -77,21 +81,20 @@ private:
 	wxString name;
 	wxString controller;
 	Controller *ctrl;
-	int nr_rows, max_rows;
-	int nr_cols, max_cols;
-	struct kbdRowList *layout;
-	// row - keys
+	int nr_rows;
+	int nr_cols;
+	KbdLayout layout;
 public:
 	Board(){
-		int i;
 		nr_rows = 0;
 		nr_cols = 0;
-		max_rows = 8;
-		max_cols = 25;
-		layout = new struct KeyItem[max_rows][max_cols];
 	}
-	bool LoadFile(wxString filename);
-	bool LoadRows(wxXmlNode *parent);
-	void AddKey(int size, int row, int col, wxString sCode);
-	void AddSapce(int size);
+	bool	   LoadFile(wxString filename);
+	bool	   LoadRows(wxXmlNode *parent);
+	void	   AddKey(int size, int row, int col, wxString sCode);
+	void	   AddSapce(int size);
+	KbdLayout *GetLayout(){ return layout; }
+};
+
+class BoardPool {
 };

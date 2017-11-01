@@ -89,10 +89,10 @@ Controller::LoadConfigs(wxXmlNode *node)
 	}
 }
 
-Controller::LoadFile(wxString filename)
+Controller::LoadFile()
 {
 	wxXmlDocument doc;
-	if (!doc.Load(filename))
+	if (!doc.Load("layouts/ps2avrGB.ctl"))
 		return false;
 
 	if (doc.GetRoot()->GetName() != "controller")
@@ -209,7 +209,7 @@ WX_DECLARE_LIST(Controller, ControllerList);
 BoardPool {
 private:
 	BoardList      boards;
-	ControllerList ctrls;
+	Controller     ctrls[] = { ps2avrGB };
 public:
 	LoadControllers();
 	LoadBoards();
@@ -218,16 +218,9 @@ public:
 
 int BoardPool::LoadControllers()
 {
-	wxFileSystem fs;
-	wsString pwd = fs.GetPath();
-	fs.ChangePathTo("layouts", true);
-	wxString layoutPath = fs.GetPath();
-	wxString fname = fs.FindFirst("*.ctl", wxFILE);
-	while (fname != ""){
-		Controller *ctl = new Controller();
-		ctl->LoadFile(fname);
-		ctrls.Append(ctl);
-		fname = fs.FindNext();
+	int i, nr_ctrls = sizeof(ctrls) / sizeof(Controller);
+	for (i = 0; i < nr_ctrls; i ++){
+		ctrls[i].LoadFile();
 	}
 	return 0;
 }
