@@ -1,6 +1,7 @@
 /* board.h
  *  (C) Seo Bon Keun, 2017
  */
+
 #include <wx/list.h>
 
 struct Key {
@@ -42,9 +43,12 @@ struct KbdLayer {
 
 WX_DECLARE_LIST(struct KbdLayer, KbdLayers);
 
+typedef enum {
+	KBD_STATE_NORMAL, KBD_STATE_MAPPER, KBD_STATE_LOADER
+} KbdState_t;
+
 class Controller {
 private:
-	int cols, rows;
 	wxString  name;
 	wxString  author;
 	wxString  url;
@@ -52,6 +56,9 @@ private:
 	KbdLayout keycodes;
 	Configs   configs;
 	KbdFuncs  functions;
+	int	  cols, rows, nr_layers;
+	int	  **keymap;
+
 public:
 	Controller(){
 		cols = 0;
@@ -60,20 +67,29 @@ public:
 
 	bool	  LoadFile();
 
-	void      AddLayer(wxXmlNode *node);
+	void      LoadLayer(wxXmlNode *node);
 	KbdLayers GetLayers();
 
 	void      LoadKeyCodes(wxXmlNode *node);
 	KbdLayout GetKeyCodes();
-	int	  GetKeyCode(int code);
 	int	  GetKeyCode(wxString label);
+	wxString  GetKeyLabel(int code);
 
-	void      AddConfig(wxXmlNode *node);
+	int	  SetKeyMap(int row, int col, int code);
+	int	  SetKeyMap(int row, int col, wxString label);
+
+	void      LoadConfig(wxXmlNode *node);
 	Configs   GetConfigs();			     // for display
 	KbdConfig GetConfig(wxString option);
 	void      SetConfig(wxString option, wxString value);  // set option
-	int	  DownloadConfig();
-	int	  UploadConfig();
+
+	virtual int  SetKdbState(KbdState_t &state);
+	virtual int  LoadKeyMap();
+	virtual int  SaveKeyMap();
+	virtual int  RetrieveKeyMap();
+	virtual int  ApplyKeyMap();
+	virtual int  RetriveConfig();
+	virtual int  ApplyConfig();
 };
 
 class Board {
@@ -89,11 +105,12 @@ public:
 		nr_rows = 0;
 		nr_cols = 0;
 	}
-	bool	   LoadFile(wxString filename);
-	bool	   LoadRows(wxXmlNode *parent);
-	void	   AddKey(int size, int row, int col, wxString sCode);
-	void	   AddSapce(int size);
-	KbdLayout *GetLayout(){ return layout; }
+	bool	    LoadFile(wxString filename);
+	bool	    LoadRows(wxXmlNode *parent);
+	void	    AddKey(int size, int row, int col, wxString sCode);
+	void	    AddSapce(int size);
+	KbdLayout  *GetLayout(){ return layout; }
+	Controller *GetController(){ return ctrl; }
 };
 
 class BoardPool {
