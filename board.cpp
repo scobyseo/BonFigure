@@ -203,18 +203,7 @@ void Board::SetController(Controller *ctrl)
 	this->ctrl = ctrl;
 }
 
-WX_DECLARE_LIST(Board, BoardList);
-WX_DECLARE_LIST(Controller, ControllerList);
-
-BoardPool {
-private:
-	BoardList      boards;
-	Controller     ctrls[] = { ps2avrGB };
-public:
-	LoadControllers();
-	LoadBoards();
-};
-
+/*********************** BoardPool Class Implementation **********************/
 
 int BoardPool::LoadControllers()
 {
@@ -227,13 +216,22 @@ int BoardPool::LoadControllers()
 
 Controller *BoardPool::GetController(wxString name)
 {
-	ControllerList::iterator iter;
-	for (iter = ctrls.begin(); iter != ctrls.end(); ++iter){
-		Controller *ctl = iter;
-		if (ctl->name == name){
-			return ctl;
-		}
+	int i, nr_ctrls = sizeof(ctrls) / sizeof(Controller);
+	for (i = 0; i < nr_ctrls; i ++){
+		if (ctrls[i].name == name)
+			return &ctrls[i];
 	}
+	return NULL;
+}
+
+Controller *BoardPool::GetController(int mid, int pid)
+{
+	int i, nr_ctrls = sizeof(ctrls) / sizeof(Controller);
+	for (i = 0; i < nr_ctrls; i ++){
+//		if (ctrls[i].Check(mid, pid))
+//			return &ctrls[i];
+	}
+	return NULL;
 }
 
 int BoardPool::LoadBoards()
@@ -262,4 +260,16 @@ Board *BoardPool::GetBoard(wxString name)
 			return brd;
 		}
 	}
+}
+
+wxArrayString BoardPool::GetBoardList(int mid, int pid)
+{
+	BoardList::iterator iter;
+	wxArrayString blist;
+	for (iter = boards.begin(); iter != boards.end(); ++iter){
+		Boards *brd = iter;
+		if (brd->GetController()->Check(mid, pid))
+			blist->Add(brd->GetName());
+	}
+	return blist;
 }

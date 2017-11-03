@@ -83,6 +83,9 @@ public:
 	KbdConfig GetConfig(wxString option);
 	void      SetConfig(wxString option, wxString value);  // set option
 
+	bool	  IsA(wxString name);
+	bool	  IsA(int mid, int pid);
+
 	virtual int  SetKdbState(KbdState_t &state);
 	virtual int  LoadKeyMap();
 	virtual int  SaveKeyMap();
@@ -111,7 +114,25 @@ public:
 	void	    AddSapce(int size);
 	KbdLayout  *GetLayout(){ return layout; }
 	Controller *GetController(){ return ctrl; }
+	wxString    GetName();
+	bool	    IsA(wxString name);
 };
 
+WX_DECLARE_LIST(Board, BoardList);
+WX_DECLARE_LIST(Controller, ControllerList);
+
 class BoardPool {
+private:
+	BoardList   boards;
+	Controller  ctrls[] = { ps2avrGB };
+public:
+	int	    LoadControllers();
+	Controller *GetController(wxString name);
+	Controller *GetController(int mid, int pid);
+
+	int	    LoadBoards();
+	Board       GetBoard(wxString name);
+	wxArrayString  GetBoardList(int mid, int pid);
 };
+
+
