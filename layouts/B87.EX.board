@@ -2,7 +2,7 @@
 <board>
   <name>B87.EX</name>
   <controller>ps2avrGB</controller>
-  <row>
+  <layout>
     <key size="1" row="0" col="5" keycode="ESC"/>
     <space size="1" />
     <key size="1" row="2" col="5" keycode="F1"/>
@@ -28,8 +28,8 @@
     <key size="1" row="7" col="5" keycode="Stop"/>
     <key size="1" row="8" col="5" keycode="Prev"/>
     <key size="1" row="9" col="5" keycode="Next"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1" row="0" col="4" keycode="`"/>
     <key size="1" row="1" col="4" keycode="1"/>
     <key size="1" row="2" col="4" keycode="2"/>
@@ -54,8 +54,8 @@
     <key size="1" row="7" col="4" keycode="N/"/>
     <key size="1" row="8" col="4" keycode="N*"/>
     <key size="1" row="9" col="4" keycode="N-"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.5" row="0" col="3" keycode="Tab"/>
     <key size="1" row="1" col="3" keycode="q"/>
     <key size="1" row="2" col="3" keycode="w"/>
@@ -79,8 +79,8 @@
     <key size="1" row="7" col="3" keycode="N8"/>
     <key size="1" row="8" col="3" keycode="N9"/>
     <key size="1" row="9" col="3" keycode="N="/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.75" row="0" col="2" keycode="CapsLk"/>
     <key size="1" row="1" col="2" keycode="a"/>
     <key size="1" row="2" col="2" keycode="s"/>
@@ -100,8 +100,8 @@
     <key size="1" row="7" col="2" keycode="N5"/>
     <key size="1" row="8" col="2" keycode="N6"/>
     <key size="1" row="9" col="2" keycode="N+"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.25" row="0" col="1" keycode="LShift"/>
     <key size="1" row="3" col="0" keycode="ISO2"/>
     <key size="1" row="1" col="1" keycode="z"/>
@@ -123,8 +123,8 @@
     <key size="1" row="7" col="1" keycode="N2"/>
     <key size="1" row="8" col="1" keycode="N3"/>
     <key size="1" row="9" col="1" keycode="N,"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.25" row="0" col="0" keycode="LCtrl"/>
     <key size="1.25" row="1" col="0" keycode="LWin"/>
     <key size="1.25" row="2" col="0" keycode="LAlt"/>
@@ -142,5 +142,6 @@
     <key size="1" row="7" col="0" keycode="N00"/>
     <key size="1" row="8" col="0" keycode="N."/>
     <key size="1" row="9" col="0" keycode="NEnter"/>
-  </row>
+  </layout>
+  
 </board>

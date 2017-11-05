@@ -4,8 +4,10 @@
 
 #include <wx/list.h>
 
+//namespace bonkb;
+
 struct Key {
-	enum KeyType { KEY_NORMAL, KEY_BLANK, KEY_LED } type;
+	enum KeyType { KEY_NORMAL, KEY_BLANK, KEY_NEWLINE } keytype_t;
 	wxString label;
 	wxString comment;
 	float width;
@@ -14,8 +16,7 @@ struct Key {
 	int   row, col;	/* matrix related : valid for layer view */
 };
 
-WX_DECLARE_LIST(struct Key, KeyRow);
-WX_DECLARE_LIST(KeyRow, KbdLayout);
+WX_DECLARE_LIST(struct Key, KbdLayout);
 
 struct KbdConfig {
 	wxString name;
@@ -56,6 +57,7 @@ private:
 	KbdLayout keycodes;
 	Configs   configs;
 	KbdFuncs  functions;
+	BoardList boards;
 	int	  cols, rows, nr_layers;
 	int	  **keymap;
 
@@ -67,8 +69,8 @@ public:
 
 	bool	  LoadFile();
 
-	void      LoadLayer(wxXmlNode *node);
-	KbdLayers GetLayers();
+	void      LoadLayers(wxXmlNode *node);
+	KbdLayers GetLayer();
 
 	void      LoadKeyCodes(wxXmlNode *node);
 	KbdLayout GetKeyCodes();
@@ -82,6 +84,9 @@ public:
 	Configs   GetConfigs();			     // for display
 	KbdConfig GetConfig(wxString option);
 	void      SetConfig(wxString option, wxString value);  // set option
+
+	void	  LoadBoards(wxXmlNode *node);
+	Board	  GetBoard(wxString name);
 
 	bool	  IsA(wxString name);
 	bool	  IsA(int mid, int pid);
@@ -105,17 +110,15 @@ private:
 	KbdLayout layout;
 public:
 	Board(){
-		nr_rows = 0;
-		nr_cols = 0;
+		nr_rows = nr_cols = 0;
 	}
+
 	bool	    LoadFile(wxString filename);
-	bool	    LoadRows(wxXmlNode *parent);
-	void	    AddKey(int size, int row, int col, wxString sCode);
-	void	    AddSapce(int size);
-	KbdLayout  *GetLayout(){ return layout; }
+	bool	    LoadLayout(wxXmlNode *parent);
+	void	    AddKey(keytype_t type, wxXmlNode *node);
+	KbdLayout  *GetLayout(){ return &layout; }
 	Controller *GetController(){ return ctrl; }
 	wxString    GetName();
-	bool	    IsA(wxString name);
 };
 
 WX_DECLARE_LIST(Board, BoardList);
@@ -135,4 +138,4 @@ public:
 	wxArrayString  GetBoardList(int mid, int pid);
 };
 
-
+extern BoardPool boards;	/* global board pool */

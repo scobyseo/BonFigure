@@ -9,25 +9,27 @@ WX_DEFINE_LIST(KbdConfigs);
 WX_DEFINE_LIST(KbdLayers);
 
 
-Controller::AddLayer(wxXmlNode *node)
+void Controller::LoadLayers(wxXmlNode *node)
 {
-	struct KbdLayer *layer = new struct KbdLayer;
-
-	layer->id      = node->GetAttribute("id", "-1");
-	layer->name    = node->GetAttribute("name", "");
-	layer->comment = node->GetAttribute("comment", "");
-	layers.Append(layer);
+	wxXmlNode *child = node->GetChildren();
+	while(child){
+		struct KbdLayer *layer = new struct KbdLayer;
+		layer->id      = child->GetAttribute("id", "-1");
+		layer->name    = child->GetAttribute("name", "");
+		layer->comment = child->GetAttribute("comment", "");
+		layers.Append(layer);
+		child->GetNext();
+	}
 }
 
-Controller::GetLayer(int id)
+wxString Controller::GetLayer(int id)
 {
 	return layers;
 }
 
-Controller::LoadKeyCodes(wxXmlNode *node)
+void Controller::LoadKeyCodes(wxXmlNode *node)
 {
 	wxXmlNode *child;
-	KeyRow *row = new KeyRow;
 
 	for (child = node->GetChildren(); child; child = child->GetNext()){
 		wxString sName = child->GetName();
@@ -41,16 +43,15 @@ Controller::LoadKeyCodes(wxXmlNode *node)
 			key->height  = 1.0;
 			key->row     = -1;
 			key->col     = -1;
-			row->Append(key);
+			keycodes.Append(key);
 		} else if (sName == "newline"){
 			keycodes.Append(row);
 			row = new KeyRow;
 		}
 	}
-	keycodes.Append(row);
 }
 
-Controller::LoadConfigs(wxXmlNode *node)
+void Controller::LoadConfigs(wxXmlNode *node)
 {
 	wxXmlNode *child;
 	struct KbdConfig *config;
@@ -89,16 +90,35 @@ Controller::LoadConfigs(wxXmlNode *node)
 	}
 }
 
-Controller::LoadFile()
+void Controller::LoadBoards(wxXmlNode *node)
+{
+	wxXmlNode *child;
+	struct Board *board;
+
+	for (child = node->GetChildren(); child; child = child->GetNext()){
+		if (child->GetName() != "board")
+			continue;
+
+		board = new Board;
+		wxString name = child->GetAttribute("name", ""); /* NO USE */
+		wxString path = child->GetAttribute("path", "");
+		if (board->LoadFile(path))
+			boards.Append(board);
+		else delete(board);
+	}
+}
+
+bool Controller::LoadFile()
 {
 	wxXmlDocument doc;
 	if (!doc.Load("layouts/ps2avrGB.ctl"))
 		return false;
 
-	if (doc.GetRoot()->GetName() != "controller")
+	wxXmlNode *root = doc.GetRoot();
+	if (root->GetName() != "controller")
 		return false;
 
-	wxXmlNode *child = doc.GetRoot()->GetChildren();
+	wxXmlNode *child = root->GetChildren();
 	while (child){
 		if (child->GetName() == "name") {
 			this->name = child->GetNodeContent();
@@ -107,68 +127,57 @@ Controller::LoadFile()
 		} else if (child->GetName() == "url") {
 			this->url = child->GetNodeContent();
 		} else if (child->GetName() == "matrix") {
-			wxString sRows = child->GetAttribute("rows", "0");
-			wxString sCols = child->GetAttribute("cols", "0");
-			sRows.ToLong(&this->rows);
-			sCols.ToLong(&this->cols);
+			child->GetAttribute("rows", "0").ToLong(&this->rows);
+			child->GetAttribute("cols", "0").ToLong(&this->cols);
 		} else if (child->GetName() == "layers") {
 			wxString sSize = child->GetAttribute("size", "0");
-			int size;
-			sSize.ToLong(&size);
-			wxXmlNode *node = child->GetChildren();
-			while(node){
-				AddLayer(node);
-				node->GetNext();
-			}
+			sSize.ToLong(&this->nr_layers);
+			LoadLayers(child);
 		} else if (child->GetName() == "keycodes") {
 			LoadKeyCodes(child);
 		} else if (child->GetName() == "configurations") {
 			LoadConfigs(child);
 		} else if (child->GetName() == "functions") {
 			LoadFunctions(child);
+		} else if (child->GetName() == "boards") {
+			LoadBoards(child);
 		} else { /* DO NOTHING */ }
 		child = child->GetNext();
 	}
 }
 
-/* ----------------------- BOARD ------------------------ */
+/************************* Board Class Implementation ************************/
 
-Board::AddKey(wxXmlNode *node)
+Board::AddKey(keytype_t type, wxXmlNode *node)
 {
 	struct Key *key = new struct Key;
 
-	key->type    = KEY_NORMAL;
+	key->type    = type;
 	key->label   = node->GetAttribute("keycode", " "); // unmapped key code
-	// key->code = controller->LookupKeycode(key->label);
+	// key->code = ctrl->LookupKeycode(key->label);
 	key->comment = node->GetNodeContent();
 	key->height  = 1.0;
 	node->GetAttribute("size", "1").ToDouble(&key->width);
-	node->GetAttribute("col", "-1").ToLong(&key->col);
-	node->GetAttribute("row", "-1").ToLong(&key->row);
+	if (type == KEY_NORMAL){
+		node->GetAttribute("col", "-1").ToLong(&key->col);
+		node->GetAttribute("row", "-1").ToLong(&key->row);
+	} else {
+		key->col     = -1;
+		key->row     = -1;
+	}
+	layout.Append(key);
 }
 
-void Board::AddSpace(wxXmlNode *node)
-{
-	struct Key *key = new struct Key;
-
-	key->type    = KEY_BLANK;
-	key->label   = "";
-	// key->code = -1;
-	key->comment = node->GetNodeContent();
-	key->col     = -1;
-	key->row     = -1;
-	key->height  = 1.0;
-	node->GetAttribute("size", "1").ToDouble(&key->width);
-}
-
-bool Board::LoadRows(wxXmlNode *parent)
+bool Board::LoadLayout(wxXmlNode *parent)
 {
 	wxXmlNode *keyNode;
 	for (keyNode = parent->GetChildren(); keyNode; keyNode = keyNode->GetNext()){
 		if (keyNode->GetName == "key"){
-			AddKey(keyNode);
+			AddKey(KEY_NORMAL, keyNode);
 		} else if (keyNode->GetName == "space"){
-			AddSpace(keyNode);
+			AddKey(KEY_BLANK, keyNode);
+		} else if (keyNode->GetName == "newline"){
+			AddKey(KEY_NEWLINE, keyNode);
 		} else { /* DO NOTHING */ }
 	}
 	return true;
@@ -189,8 +198,8 @@ wxString Board::LoadFile(wxString filename)
 			this->name = child->GetNodeContent();
 		} else if (child->GetName() == "controller") {
 			this->controller = child->GetNodeContent();
-		} else if (child->GetName() == "row") {
-			loadRows(child);
+		} else if (child->GetName() == "layout") {
+			loadLayout(child);
 		} else { /* DO NOTHING */ }
 		child = child->GetNext();
 	}
@@ -228,8 +237,8 @@ Controller *BoardPool::GetController(int mid, int pid)
 {
 	int i, nr_ctrls = sizeof(ctrls) / sizeof(Controller);
 	for (i = 0; i < nr_ctrls; i ++){
-//		if (ctrls[i].Check(mid, pid))
-//			return &ctrls[i];
+		if (ctrls[i].IsA(mid, pid))
+			return &ctrls[i];
 	}
 	return NULL;
 }
@@ -268,7 +277,7 @@ wxArrayString BoardPool::GetBoardList(int mid, int pid)
 	wxArrayString blist;
 	for (iter = boards.begin(); iter != boards.end(); ++iter){
 		Boards *brd = iter;
-		if (brd->GetController()->Check(mid, pid))
+		if (brd->GetController()->IsA(mid, pid))
 			blist->Add(brd->GetName());
 	}
 	return blist;

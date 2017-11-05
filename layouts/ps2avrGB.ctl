@@ -3,6 +3,7 @@
   <name>ps2avrGB</name>
   <author>BeastFace</author>
   <url></url>
+  <id vendor="20a0" product="422d"/>
   <matrix rows="15" cols="8"/>
   <layers size="4">
           <layer id="0" name="Normal">The default layer which is activated when the keyboard connects to the PC</layer>
@@ -323,4 +324,9 @@
     <bootloader type="HIDBOOT" />
     <mapper type="ps2avrU"/>
   </functions>
+  <boards>
+    <board name="B87.EX" path="B87.EX.board"/>
+    <board name="BFace" path="BFace.board"/>
+    <board name="22mini.b" path="22mini.b.board"/>
+  </boards>
 </controller>

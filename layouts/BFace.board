@@ -2,7 +2,7 @@
 <board>
   <name>BFace</name>
   <controller>ps2avrGB</controller>
-  <row>
+  <layout>
     <key size="1" row="0" col="5" keycode="ESC"/>
     <key size="1" row="1" col="4" keycode="1"/>
     <key size="1" row="2" col="4" keycode="2"/>
@@ -18,8 +18,8 @@
     <key size="1" row="12" col="4" keycode="="/>
     <key size="1" row="13" col="4" keycode="`"/>
     <key size="1" row="14" col="4" keycode="BackSpc"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.5" row="0" col="3" keycode="Tab"/>
     <key size="1" row="1" col="3" keycode="q"/>
     <key size="1" row="2" col="3" keycode="w"/>
@@ -34,8 +34,8 @@
     <key size="1" row="11" col="3" keycode="["/>
     <key size="1" row="12" col="3" keycode="]"/>
     <key size="1.5" row="13" col="3" keycode="\"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.75" row="0" col="2" keycode="CapsLk"/>
     <key size="1" row="1" col="2" keycode="a"/>
     <key size="1" row="2" col="2" keycode="s"/>
@@ -50,8 +50,8 @@
     <key size="1" row="11" col="2" keycode="'"/>
     <key size="1" row="12" col="2" keycode="ISO1"/>
     <key size="1.25" row="13" col="2" keycode="Enter"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.25" row="0" col="1" keycode="LShift"/>
     <key size="1" row="3" col="0" keycode="ISO2"/>
     <key size="1" row="1" col="1" keycode="z"/>
@@ -66,8 +66,8 @@
     <key size="1" row="10" col="1" keycode="/"/>
     <key size="1.75" row="11" col="1" keycode="RShift"/>
     <key size="1" row="12" col="1" keycode="Fn"/>
-  </row>
-  <row>
+  
+  <newline/>
     <key size="1.25" row="0" col="0" keycode="LCtrl"/>
     <key size="1.25" row="1" col="0" keycode="LWin"/>
     <key size="1.25" row="2" col="0" keycode="LAlt"/>
@@ -76,5 +76,6 @@
     <key size="1.25" row="10" col="0" keycode="RWin"/>
     <key size="1.25" row="11" col="0" keycode="App"/>
     <key size="1.25" row="12" col="0" keycode="RCtrl"/>
-  </row>
+  </layout>
+  
 </board>
