@@ -6,10 +6,11 @@
 
 //namespace bonkb;
 
+typedef enum { KEY_NORMAL, KEY_BLANK, KEY_NEWLINE } keytype_t;
 struct Key {
-	enum KeyType { KEY_NORMAL, KEY_BLANK, KEY_NEWLINE } keytype_t;
-	wxString label;
-	wxString comment;
+	keytype_t type;
+	wxString  label;
+	wxString  comment;
 	float width;
 	float height;
 	int   code;     /* valid for keycode view */
@@ -57,17 +58,16 @@ private:
 	KbdLayout keycodes;
 	Configs   configs;
 	KbdFuncs  functions;
-	BoardList boards;
+	wxArrayString board_names;
+	wxArrayString board_paths;
 	int	  cols, rows, nr_layers;
-	int	  **keymap;
+	int	  ***keymap;
 
 public:
-	Controller(){
-		cols = 0;
-		rows = 0;
-	}
+	Controller(){ }
 
-	bool	  LoadFile();
+	bool	  LoadFile(wxString fname);
+	virtual bool LoadFile() { /* Inherit this for group loading */ }
 
 	void      LoadLayers(wxXmlNode *node);
 	KbdLayers GetLayer();
@@ -86,18 +86,20 @@ public:
 	void      SetConfig(wxString option, wxString value);  // set option
 
 	void	  LoadBoards(wxXmlNode *node);
-	Board	  GetBoard(wxString name);
+	Board	 *GetBoard(wxString name);
+	wxArrayString  GetBoardList();
 
-	bool	  IsA(wxString name);
-	bool	  IsA(int mid, int pid);
+	bool  IsA(int vid, int pid) {
+		return (this->vid == vid) && (this->pid == pid);
+	}
 
 	virtual int  SetKdbState(KbdState_t &state);
-	virtual int  LoadKeyMap();
-	virtual int  SaveKeyMap();
-	virtual int  RetrieveKeyMap();
-	virtual int  ApplyKeyMap();
-	virtual int  RetriveConfig();
-	virtual int  ApplyConfig();
+	virtual int  LoadKeyMap(wxString fname);
+	virtual int  SaveKeyMap(wxString fname);
+	virtual int  RetrieveKeyMap() {}
+	virtual int  ApplyKeyMap() {}
+	virtual int  RetriveConfig() {}
+	virtual int  ApplyConfig() {}
 };
 
 class Board {
@@ -109,25 +111,38 @@ private:
 	int nr_cols;
 	KbdLayout layout;
 public:
-	Board(){
-		nr_rows = nr_cols = 0;
-	}
+	Board(Controller *ctrl){ this->ctrl = ctrl; }
 
 	bool	    LoadFile(wxString filename);
 	bool	    LoadLayout(wxXmlNode *parent);
 	void	    AddKey(keytype_t type, wxXmlNode *node);
 	KbdLayout  *GetLayout(){ return &layout; }
-	Controller *GetController(){ return ctrl; }
 	wxString    GetName();
 };
 
 WX_DECLARE_LIST(Board, BoardList);
 WX_DECLARE_LIST(Controller, ControllerList);
 
+class HexFile {
+private:
+	char *buf;
+	int base_addr;
+	int length;
+	int current;
+
+public:
+	HexFile(int base_addr) { this->base_addr = base_addr; }
+	bool Read(wxString fname);
+	//bool Write(wxString fname);
+	char FirstChar() { current = 0; return buf[0]; }
+	char GetNextChar() { return (current < length) ? buf[current++] : 0; }
+};
+
 class BoardPool {
 private:
 	BoardList   boards;
 	Controller  ctrls[] = { ps2avrGB };
+
 public:
 	int	    LoadControllers();
 	Controller *GetController(wxString name);

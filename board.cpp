@@ -96,22 +96,18 @@ void Controller::LoadBoards(wxXmlNode *node)
 	struct Board *board;
 
 	for (child = node->GetChildren(); child; child = child->GetNext()){
-		if (child->GetName() != "board")
-			continue;
-
-		board = new Board;
+		if (child->GetName() != "board") continue;
 		wxString name = child->GetAttribute("name", ""); /* NO USE */
 		wxString path = child->GetAttribute("path", "");
-		if (board->LoadFile(path))
-			boards.Append(board);
-		else delete(board);
+		board_names.Add(name);
+		board_paths.Add(path);
 	}
 }
 
-bool Controller::LoadFile()
+bool Controller::LoadFile(wxString fname)
 {
 	wxXmlDocument doc;
-	if (!doc.Load("layouts/ps2avrGB.ctl"))
+	if (!doc.Load(fname))
 		return false;
 
 	wxXmlNode *root = doc.GetRoot();
@@ -146,9 +142,88 @@ bool Controller::LoadFile()
 	}
 }
 
+Board *Controller::GetBoard(wxString name)
+{
+	for (int i = 0; i < board_names.GetCount(); i ++){
+		if (name != board_names[i]) continue;
+		Board *board = new Board(this);
+		if ( board->LoadFile(board_paths[i]) ){
+			return board;
+		} else {
+			delete(board);
+			return NULL;
+		}
+	}
+	return NULL;
+}
+
+wxArrayString Controller::GetBoardList()
+{
+	return board_names;
+}
+
+Configs Controller::GetConfigs()
+{
+	return configs;
+}
+
+KbdConfig *Controller::GetConfig(wxString option)
+{
+	for (Configs::iterator *iter = configs.begin();
+			iter != configs.end(); iter++){
+		KbdConfig *config = *iter;
+		if (config->name == option){
+			return config;
+		}
+	}
+	return NULL;
+}
+
+void Controller::SetConfig(wxString option, wxString value)
+{
+	for (Configs::iterator *iter = configs.begin();
+			iter != configs.end(); iter++){
+		KbdConfig *config = *iter;
+		if (config->name != option) continue;
+		if (config->type == OptNumber){
+			long v;
+			value.ToInt(&v);
+			config->value = v;
+		} else if (config->type == OptSelection){
+		} else if (config->type == OptColor){
+		} else if (config->type == OptArray){
+		}
+	}
+}
+
+int Controller::LoadKeyMap(wxString fname)
+{
+	//  TODO: add base_address / size
+	HexFile f = new HexFile(0);
+	if (!this->keymap)
+		this->keymap = new (int**)[this->nr_layers];
+
+	f.FirstChar();
+	for (l = 0; l < this->nr_layers; l ++){
+		if (this->keymap[l] == NULL)
+			this->keymap[l] = new (int*)[this->rows];
+		for (r = 0; r < this->rows; r ++){
+			if (this->keymap[l][r] == NULL)
+				this->keymap[l][r] = new int[this->cols];
+			for (c = 0; c < this->cols; c ++){
+				this->keymap[l][r][c] = f.GetNextChar();
+			}	
+		}	
+	}
+}
+
+int Controller::SaveKeyMap(wxString fname)
+{
+}
+
 /************************* Board Class Implementation ************************/
 
-Board::AddKey(keytype_t type, wxXmlNode *node)
+bool Board::AddKey(keytype_t type, wxXmlNode *node)
 {
 	struct Key *key = new struct Key;
 
@@ -207,9 +282,29 @@ wxString Board::LoadFile(wxString filename)
 	return this->controller;
 }
 
-void Board::SetController(Controller *ctrl)
+bool HexFile::Read(wxString fname)
 {
-	this->ctrl = ctrl;
+	wxTextFile f;
+	if (!f.Open(fname, wxFile::read))
+		return false;
+
+	for (wxString s = f.GetFirstLine();
+			!f.Eof(); s = f.GetNextLine()){
+		if ( s(0,1) != ":" ) break;
+		long addr, len, type, checksum;
+		s(1,2).ToLong(&len,  16);
+		s(3,4).ToLong(&addr, 16);
+		s(7,2).ToLong(&type, 16);
+		checksum = len + type + (addr >> 8) + (addr & 0xFF);
+		for (int i = 0; i < len; i ++){
+			long v;
+			s(9+i, 2).ToLong(&v, 16);
+			checksum += v;
+		}
+		/* TODO: check CS */
+	}
+
+	return true;
 }
 
 /*********************** BoardPool Class Implementation **********************/
@@ -217,20 +312,9 @@ void Board::SetController(Controller *ctrl)
 int BoardPool::LoadControllers()
 {
 	int i, nr_ctrls = sizeof(ctrls) / sizeof(Controller);
-	for (i = 0; i < nr_ctrls; i ++){
+	for (i = 0; i < nr_ctrls; i ++)
 		ctrls[i].LoadFile();
-	}
 	return 0;
-}
-
-Controller *BoardPool::GetController(wxString name)
-{
-	int i, nr_ctrls = sizeof(ctrls) / sizeof(Controller);
-	for (i = 0; i < nr_ctrls; i ++){
-		if (ctrls[i].name == name)
-			return &ctrls[i];
-	}
-	return NULL;
 }
 
 Controller *BoardPool::GetController(int mid, int pid)

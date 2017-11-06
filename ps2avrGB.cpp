@@ -131,7 +131,7 @@ typedef struct option_s {
 
 class ps2avrGB: public Controller {
 private:
-	char **ll_keymap;
+	char ***ll_keymap;
 	libusb_device_handle *usb;
 
 	int SetLedOption(int option, int value);
@@ -148,6 +148,7 @@ public:
 		delete(ll_keymap);
 	}
 
+	bool LoadFile() { LoadFile("layouts/ps2avrGB.ctl"); }
 	void SetUSB(libusb_device_handle *usb) { this->usb = usb; }
 
 	int  SetKbdState(KbdState_t &state);

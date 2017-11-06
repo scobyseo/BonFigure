@@ -14,10 +14,13 @@ class KBDLayoutCanvas: public wxPanel
 private:
 	int scale = 40;
 	float act_col = -1, act_row = -1;
-	wxPanel *parent;
+	bool  is_board_view;
+	wxPanel    *parent;
+	KbdLayout  *layout;
+	Controller *controller;
 
 public:
-	KBDLayoutCanvas( wxPanel *parent );
+	KBDLayoutCanvas( wxPanel *parent, KbdLayout *layout );
 
 	void OnPaint(wxPaintEvent &event);
 	void OnSize (wxSizeEvent  &event);

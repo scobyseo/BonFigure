@@ -7,14 +7,19 @@
 
 #include "kbdlayout.h"
 
-KBDLayoutCanvas::KBDLayoutCanvas( wxPanel* parent )
+KBDLayoutCanvas::KBDLayoutCanvas( wxPanel* parent, KbdLayout *layout )
 	: wxPanel(parent)
 {
 	this->parent = parent;
-	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(KBDLayoutCanvas::OnMouseDown));
-	Connect(wxEVT_LEFT_UP,   wxMouseEventHandler(KBDLayoutCanvas::OnMouseUp));
-	Connect(wxEVT_PAINT,     wxPaintEventHandler(KBDLayoutCanvas::OnPaint));
-	Connect(wxEVT_SIZE,      wxSizeEventHandler(KBDLayoutCanvas::OnSize));
+	this->layout = layout;
+	Connect(wxEVT_LEFT_DOWN,
+			wxMouseEventHandler(KBDLayoutCanvas::OnMouseDown));
+	Connect(wxEVT_LEFT_UP,
+			wxMouseEventHandler(KBDLayoutCanvas::OnMouseUp));
+	Connect(wxEVT_PAINT,
+			wxPaintEventHandler(KBDLayoutCanvas::OnPaint));
+	Connect(wxEVT_SIZE,
+			wxSizeEventHandler(KBDLayoutCanvas::OnSize));
 }
 
 void KBDLayoutCanvas::DrawKey(wxDC &dc, wxString label,
@@ -29,7 +34,7 @@ void KBDLayoutCanvas::DrawKey(wxDC &dc, wxString label,
 		dc.SetPen(*wxWHITE_PEN);
 	}
 	dc.DrawRoundedRectangle(x * scale + 1, y * scale + 1,
-			w * scale - 2, h * scale - 2, scale / 10);
+				w * scale - 2, h * scale - 2, scale / 10);
 	dc.SetBrush(wxBrush(*wxBLUE));
 	wxCoord length, height, descent;
 #if 1
@@ -40,27 +45,26 @@ void KBDLayoutCanvas::DrawKey(wxDC &dc, wxString label,
 #endif
 	dc.GetTextExtent(label, &length, &height, &descent );
 	dc.DrawText(label, x * scale + w * scale / 2 - length / 2,
-						  y * scale + h * scale / 2 - height / 2);
+			   y * scale + h * scale / 2 - height / 2);
 }
 
 void KBDLayoutCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 {
-	int i, j;
-	float r, c;
 	wxPaintDC bpdc(this);
 	//PrepareDC(bpdc);
-	r = c = 0.0;
-	for (i = 0; i < 5; i ++){
-		for (j = 0; j < 16; j ++){
-			struct Key key = sample_layout[i][j];
-			if (key.width == 0.0){
-				c = 0.0;
-				r += 1.0;
-				break;
-			}
-			DrawKey(bpdc, key.label, c, r, 
-					 key.width, key.height);
-			c += key.width;
+	float r = 0.0, c = 0.0;
+	for (KbdLayout::iterator iter = layout.begin(); 
+			iter != layout.end(); ++iter){
+		struct Key *key = *iter;
+		if (key->type == KEY_NORMAL){
+			DrawKey(bpdc, key->label, c, r, 
+				key->width, key->height);
+			c += key->width;
+		} else if (key->type == KEY_BLANK){
+			c += key->width;
+		} else if (key->type == KEY_NEWLINE){
+			c = 0.0;
+			r += 1.0;
 		}
 	}
 }
@@ -76,21 +80,20 @@ void KBDLayoutCanvas::OnMouseDown(wxMouseEvent &event)
 	PrepareDC(dc);
 	wxPoint p = event.GetLogicalPosition(dc);
 
-	int i, j;
 	float r = 0.0, c = 0.0;
-	for (i = 0; i < 5; i ++){
-		for (j = 0; j < 16; j ++){
-			struct Key key = sample_layout[i][j];
-			if (key.width == 0.0){
-				c = 0.0;
-				r += 1.0;
-				break;
-			}
-			if (p.x >= c*scale && p.y >= r*scale){
-				act_col = c;
-				act_row = r;
-			}
-			c += key.width;
+	for (KbdLayout::iterator iter = layout.begin(); 
+			iter != layout.end(); ++iter){
+		struct Key *key = *iter;
+		if (key->type == KEY_NEWLINE){
+			c = 0.0;
+			r += 1.0;
+			continue;
+		} else if (p.x >= c*scale && p.y >= r*scale){
+			act_col = c;
+			act_row = r;
+			c += key->width;
+		} else {
+			c += key->width;
 		}
 	}
 	Refresh(false);
